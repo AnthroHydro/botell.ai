@@ -1,0 +1,20 @@
+--extra-index-url https://download.pytorch.org/whl/cu117
+numpy
+tensorflow
+keras
+pillow
+requests
+pandas
+matplotlib
+seaborn
+graphviz
+Cython
+norfair
+kivy
+pycocotools
+opencv-python
+scikit-image
+ipython
+sahi
+yolov5
+packaging
