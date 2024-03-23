@@ -4,7 +4,7 @@ See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for installati
 
 Example code:
 
-```
+```python
 from yolo import YOLO
 
 model = YOLO(weights="bestbottle.pt", thresh=0.05)
