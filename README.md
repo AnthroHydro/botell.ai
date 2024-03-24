@@ -8,5 +8,5 @@ Example code:
 from yolo import YOLO
 
 model = YOLO(weights="bestbottle.pt", thresh=0.05)
-model.run(path='vids/demo.mp4')
+model.run(path='demo.mp4')
 ```
