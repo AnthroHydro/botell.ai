@@ -2,11 +2,12 @@
 
 See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for installation instructions.
 
-Example code:
+Example code for use as an import:
 
 ```python
-from yolo import YOLO
+from bottledetector import BottleDetector
 
-model = YOLO(weights="bestbottle.pt", thresh=0.05)
-model.run(path='demo.mp4')
+model = YOLO()
+model.track(path='demo.mp4')
 ```
+Type `python bottledetector.py --help` for command line usage and list of arguments.
