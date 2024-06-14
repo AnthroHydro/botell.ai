@@ -1,7 +1,6 @@
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
 from norfair import Detection, Tracker, Video, draw_boxes
-from torch import cuda, tensor
 from typing import List
 from time import time
 import numpy as np
@@ -66,7 +65,9 @@ class BottleDetector:
             thresh (float)              : confidence threshold the model should use
             show (bool)                 : whether or not the video should be displayed as tracking is run
         Returns:
+            int                         : number of bottles that were successfully tracked and counted in the video
             float                       : the accuracy of the model on the input video
+            List[tuple]                 : list of the metrics of the bottles tracked in the video
         """
 
         #init video
@@ -89,6 +90,8 @@ class BottleDetector:
         #This is the master for loop that will read the entire video frame by frame
         success = vidcap.grab()
         i = 0
+        framerate = 1.0
+        diff = []
         while success:
             start = time()
             if i % skip_frames == 0:
@@ -130,8 +133,12 @@ class BottleDetector:
                         tracked_bottles[obj.id] = (obj.age, [(x, y, i)])
 
                 end = time()
-                diff = str(skip_frames/(1e-4+end-start))[:5]
-                print(f"Tracking frame {i//skip_frames} of {total//skip_frames} at {diff}fps", end="\r", flush=True)
+                if (end-start) > 0.005:
+                    diff.append(skip_frames/(end-start))
+                if i%(skip_frames*15) == 0:
+                    framerate = np.mean(diff)
+                    diff = []
+                print(f" > Processing video ({str(100*(i+skip_frames)/total)[:5]}%) at {str(framerate)[:5]} frames per second...", end="\r", flush=True)
 
             success = vidcap.grab()
             i += 1
@@ -155,12 +162,12 @@ class BottleDetector:
                     'seconds_in_view' : str(b[0]/fps)[:3], 
                     'x_dist_travelled' : pts[-1][0] - pts[0][0]})
 
-        #print our metrics and return the error
-        print("num_tracked:", len(bottles))
+        #save metrics to variables and return them
+        nt = len(bottles)
+        er = None
         if actual_num_bottles is not None:
-            print("num_actual:", actual_num_bottles)
-            print("error:", (actual_num_bottles - len(bottles)) / actual_num_bottles)
-        return bottles
+            er = (actual_num_bottles - len(bottles)) / actual_num_bottles
+        return nt, er, bottles
         
         
     #adapted from https://github.com/tryolabs/norfair/blob/master/demos/yolov7/src/demo.py
@@ -190,7 +197,7 @@ class BottleDetector:
 
 if __name__ == "__main__":
 
-    model = BottleDetector()
+    print()
     parser = argparse.ArgumentParser()
 
     parser.add_argument("path", help="the file path to the video that is to be processed")    
@@ -198,17 +205,35 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--numbottles", type=int, default=None, help="the number of bottles that appear in the video; if this is specified, error will be calculated")
     parser.add_argument("-f", "--frameskip", type=int, default=1, help="the n for which every nth frame will be read from the video")
     parser.add_argument("-t", "--mintime", type=float, default=1.0, help="the minimum number of seconds a bottle must be on screen for it to be counted")
-    parser.add_argument("-d", "--minframedist", type=float, default=1.0, help="a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally to be counted")
+    parser.add_argument("-d", "--minframedist", type=float, default=0.5, help="a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally to be counted")
     parser.add_argument("-c", "--conf", type=float, default=0.05, help="confidence threshold the model should use")
+    parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
 
     args = parser.parse_args()
 
-    detections = model.track(
-        path=args.path, 
-        actual_num_bottles=args.numbottles, 
-        min_time=args.mintime, 
-        min_frame_dist=args.minframedist, 
-        skip_frames=args.frameskip, 
-        show=args.show, 
-        thresh=args.conf)
-    for x in detections: print(x)
+    print(" > Loading model...")
+    model = BottleDetector()
+
+    num_tracked, error, detections = model.track(
+                                            path=args.path, 
+                                            actual_num_bottles=args.numbottles, 
+                                            min_time=args.mintime, 
+                                            min_frame_dist=args.minframedist, 
+                                            skip_frames=args.frameskip, 
+                                            show=args.show, 
+                                            thresh=args.conf)
+    error = "N/A" if error is None else error
+    num_actual = "N/A" if args.numbottles is None else args.numbottles
+
+    print(f" > Writing to {args.output}...")
+    with open(args.output, 'w') as f:
+        f.write(f'Number of bottles tracked: {num_tracked}\n')
+        f.write(f'Actual number of bottles:  {num_actual}\n')
+        f.write(f'Error:  {error}\n\n')
+        for i, b in enumerate(detections):
+            f.write(f"Detection {i+1}:\n")
+            f.write(f"\tID - {b['tracking_id']}\n")
+            f.write(f"\tseconds in view - {b['seconds_in_view']}\n")
+            f.write(f"\thorizontal distance travelled (in pixels) - {b['x_dist_travelled']}\n")
+    print(" > Done!")
+
