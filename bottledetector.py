@@ -3,9 +3,13 @@ from ultralytics.engine.results import Results
 from norfair import Detection, Tracker, Video, draw_boxes
 from typing import List
 from time import time
+from datetime import timedelta
 import numpy as np
+import pandas as pd
 import cv2
 import argparse
+import openpyxl
+from openpyxl.worksheet.datavalidation import DataValidation
 
 
 class BottleDetector:
@@ -41,13 +45,14 @@ class BottleDetector:
         
     def track( self, 
                     path = "demo.mp4", 
-                    skip_frames = 30, 
+                    skip_frames = 3, 
                     tracker = None, 
                     actual_num_bottles = None, 
                     min_time = 1.0, 
                     min_frame_dist = 0.3,
                     show = False,
-                    thresh = 0.05):
+                    thresh = 0.05,
+                    save = False):
         """
         Description:
             This method gathers data from the video, running the tracking algorithm to detect bottles. Post-processing 
@@ -64,6 +69,7 @@ class BottleDetector:
                                           the bottle must travel horizontally to be counted
             thresh (float)              : confidence threshold the model should use
             show (bool)                 : whether or not the video should be displayed as tracking is run
+            save (String)               : either None or the name under which the video should be saved with tracking annotations
         Returns:
             int                         : number of bottles that were successfully tracked and counted in the video
             float                       : the accuracy of the model on the input video
@@ -72,7 +78,7 @@ class BottleDetector:
 
         #init video
         vidcap = cv2.VideoCapture(path)
-        fps = (vidcap.get(cv2.CAP_PROP_FPS)+1)//skip_frames
+        fps = vidcap.get(cv2.CAP_PROP_FPS)
         total = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
         
         #init data storage for reading into
@@ -88,28 +94,35 @@ class BottleDetector:
                 initialization_delay    = 2)
 
         #This is the master for loop that will read the entire video frame by frame
+        height = int(vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        width = int(vidcap.get(cv2.CAP_PROP_FRAME_WIDTH))
         success = vidcap.grab()
+        assert success, "Could not open video!"
         i = 0
         framerate = 1.0
         diff = []
+        if save is not None:
+            assert save[-5:] == ".xlsx", "--verify argument must be a .xlsx file"
+            fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+            writer = cv2.VideoWriter(f"{save[:-5]}.avi", fourcc, fps/skip_frames, (width, height), isColor=True)
         while success:
             start = time()
             if i % skip_frames == 0:
 
                 _, frame = vidcap.retrieve()
 
-                #get width to use in post-processing
-                width, _, _ = frame.shape
-
                 #run object detection and update the tracker
                 nf_detections = self.predict_frame(frame, thresh)
                 tracked_objects = tracker.update(detections = nf_detections)
 
                 #display the video if 'show' is True
+                annotated_frame = draw_boxes(frame, tracked_objects, thickness=3, draw_ids=True)
+                if save is not None:
+                    writer.write(annotated_frame)
                 if show:
-                    draw_boxes(frame, tracked_objects, thickness=3, draw_ids=True)
-                    cv2.imshow("VID", frame)
+                    cv2.imshow("VID", annotated_frame)
                     cv2.waitKey(1)
+
 
                 #iterate over each actively tracked object
                 for obj in tracker.get_active_objects():
@@ -156,10 +169,11 @@ class BottleDetector:
             #if the object is both on screen for long enough and travels far enough across
             #the screen horizontally, then we count that as a detected bottle in the final
             #result
-            if (b[0]/fps) > min_time and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
+            if ((pts[-1][2] - pts[0][2])/fps) > min_time and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
                 bottles.append(
                     {'tracking_id' : id, 
-                    'seconds_in_view' : str(b[0]/fps)[:3], 
+                    'start_time' : timedelta(seconds=(pts[0][2]//fps)),
+                    'end_time' : timedelta(seconds=(pts[-1][2]//fps) - 2),
                     'x_dist_travelled' : pts[-1][0] - pts[0][0]})
 
         #save metrics to variables and return them
@@ -208,6 +222,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--minframedist", type=float, default=0.5, help="a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally to be counted")
     parser.add_argument("-c", "--conf", type=float, default=0.05, help="confidence threshold the model should use")
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
+    parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
 
     args = parser.parse_args()
 
@@ -221,19 +236,41 @@ if __name__ == "__main__":
                                             min_frame_dist=args.minframedist, 
                                             skip_frames=args.frameskip, 
                                             show=args.show, 
-                                            thresh=args.conf)
+                                            thresh=args.conf,
+                                            save=args.verify)
     error = "N/A" if error is None else error
     num_actual = "N/A" if args.numbottles is None else args.numbottles
 
+    starttimes = []
+    endtimes = []
+    ids = []
+    bools = []
     print(f" > Writing to {args.output}...")
     with open(args.output, 'w') as f:
         f.write(f'Number of bottles tracked: {num_tracked}\n')
         f.write(f'Actual number of bottles:  {num_actual}\n')
         f.write(f'Error:  {error}\n\n')
         for i, b in enumerate(detections):
+            starttimes.append(str(b['start_time']))
+            endtimes.append(str(b['end_time']))
+            ids.append(b['tracking_id'])
+            bools.append("")
             f.write(f"Detection {i+1}:\n")
-            f.write(f"\tID - {b['tracking_id']}\n")
-            f.write(f"\tseconds in view - {b['seconds_in_view']}\n")
-            f.write(f"\thorizontal distance travelled (in pixels) - {b['x_dist_travelled']}\n")
+            f.write(f"\tID                 - {b['tracking_id']}\n")
+            f.write(f"\tstart time         - {b['start_time']}\n")
+            f.write(f"\tend time           - {b['end_time']}\n")
+            f.write(f"\tx pixels travelled - {b['x_dist_travelled']}\n")
+    if args.verify is not None:
+        data = {'ID' : ids, 'Start' : starttimes, 'End' : endtimes, 'True?' : bools}
+        df = pd.DataFrame.from_dict(data)
+        df.to_excel(args.verify, sheet_name='sheet1')
+        wb = openpyxl.load_workbook(args.verify)
+        ws = wb['sheet1']
+        dv = DataValidation(type="list", formula1='"True,False"', allow_blank=False)
+        dv.error = 'Your entry is not valid'
+        dv.errorTitle = 'Invalid Entry'
+        ws.add_data_validation(dv)
+        dv.ranges.add(f'E2:E{len(ids)+1}')
+        wb.save(args.verify)
     print(" > Done!")
 
