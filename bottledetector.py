@@ -52,7 +52,7 @@ class BottleDetector:
                     min_frame_dist = 0.3,
                     show = False,
                     thresh = 0.05,
-                    save = False):
+                    save = None):
         """
         Description:
             This method gathers data from the video, running the tracking algorithm to detect bottles. Post-processing 
