@@ -89,9 +89,9 @@ class BottleDetector:
             tracker = Tracker(
                 distance_function       = "euclidean", 
                 distance_threshold      = 100, 
-                reid_distance_threshold = 100, 
+                reid_distance_threshold = 150, 
                 hit_counter_max         = 30, 
-                initialization_delay    = 2)
+                initialization_delay    = 5)
 
         #This is the master for loop that will read the entire video frame by frame
         height = int(vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -138,12 +138,14 @@ class BottleDetector:
                     if obj.id in tracked_bottles:
                         pts = tracked_bottles[obj.id][1]
                         pts.append((x, y, i))
-                        tracked_bottles[obj.id] = (obj.age, pts)
+                        confs = tracked_bottles[obj.id][0]
+                        confs.append(obj.last_detection.scores[0])
+                        tracked_bottles[obj.id] = (confs, pts)
                     else:
                         (x1, y1), (x2, y2) = obj.last_detection.points
                         x = int(x1+x2)//2
                         y = int(y1+y2)//2
-                        tracked_bottles[obj.id] = (obj.age, [(x, y, i)])
+                        tracked_bottles[obj.id] = ([obj.last_detection.scores[0]], [(x, y, i)])
 
                 end = time()
                 if (end-start) > 0.005:
@@ -169,11 +171,12 @@ class BottleDetector:
             #if the object is both on screen for long enough and travels far enough across
             #the screen horizontally, then we count that as a detected bottle in the final
             #result
-            if ((pts[-1][2] - pts[0][2])/fps) > min_time and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
+            if ((pts[-1][2] - pts[0][2])/fps) > (1.5+min_time) and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
                 bottles.append(
                     {'tracking_id' : id, 
                     'start_time' : timedelta(seconds=(pts[0][2]//fps)),
                     'end_time' : timedelta(seconds=(pts[-1][2]//fps) - 2),
+                    'confs' : b[0],
                     'x_dist_travelled' : pts[-1][0] - pts[0][0]})
 
         #save metrics to variables and return them
@@ -217,10 +220,10 @@ if __name__ == "__main__":
     parser.add_argument("path", help="the file path to the video that is to be processed")    
     parser.add_argument("-s", "--show", action="store_true", help="if this is specified, the model will show the video as it is processed")
     parser.add_argument("-n", "--numbottles", type=int, default=None, help="the number of bottles that appear in the video; if this is specified, error will be calculated")
-    parser.add_argument("-f", "--frameskip", type=int, default=1, help="the n for which every nth frame will be read from the video")
+    parser.add_argument("-f", "--framerate", type=int, default=None, help="the frames per second at which the video should be processed")
     parser.add_argument("-t", "--mintime", type=float, default=1.0, help="the minimum number of seconds a bottle must be on screen for it to be counted")
     parser.add_argument("-d", "--minframedist", type=float, default=0.5, help="a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally to be counted")
-    parser.add_argument("-c", "--conf", type=float, default=0.05, help="confidence threshold the model should use")
+    parser.add_argument("-c", "--conf", type=float, default=0.02, help="confidence threshold the model should use")
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
     parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
 
@@ -228,13 +231,16 @@ if __name__ == "__main__":
 
     print(" > Loading model...")
     model = BottleDetector()
-
+    if args.framerate is not None: 
+        skipframes = int((cv2.VideoCapture(args.path).get(cv2.CAP_PROP_FPS)+1)/args.framerate)
+    else:
+        skipframes = 1
     num_tracked, error, detections = model.track(
                                             path=args.path, 
                                             actual_num_bottles=args.numbottles, 
                                             min_time=args.mintime, 
                                             min_frame_dist=args.minframedist, 
-                                            skip_frames=args.frameskip, 
+                                            skip_frames=skipframes, 
                                             show=args.show, 
                                             thresh=args.conf,
                                             save=args.verify)
@@ -246,6 +252,7 @@ if __name__ == "__main__":
     ids = []
     bools = []
     print(f" > Writing to {args.output}...")
+    assert args.output[-4:] == '.txt', "--output argument must be a .txt file"
     with open(args.output, 'w') as f:
         f.write(f'Number of bottles tracked: {num_tracked}\n')
         f.write(f'Actual number of bottles:  {num_actual}\n')
@@ -257,6 +264,7 @@ if __name__ == "__main__":
             bools.append("")
             f.write(f"Detection {i+1}:\n")
             f.write(f"\tID                 - {b['tracking_id']}\n")
+            f.write(f"\tconfs              - {str(np.mean(np.unique(b['confs'])))[:7]}\n")
             f.write(f"\tstart time         - {b['start_time']}\n")
             f.write(f"\tend time           - {b['end_time']}\n")
             f.write(f"\tx pixels travelled - {b['x_dist_travelled']}\n")
@@ -270,7 +278,8 @@ if __name__ == "__main__":
         dv.error = 'Your entry is not valid'
         dv.errorTitle = 'Invalid Entry'
         ws.add_data_validation(dv)
-        dv.ranges.add(f'E2:E{len(ids)+1}')
+        ran = f'E2:E{len(ids)+1}' if len(ids) > 0 else f'E2:E2'
+        dv.ranges.add(ran)
         wb.save(args.verify)
     print(" > Done!")
 
