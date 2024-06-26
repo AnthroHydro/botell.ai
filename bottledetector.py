@@ -1,3 +1,32 @@
+##################################################
+
+## TBD
+
+##################################################
+
+## TBD
+
+##################################################
+
+## Author: Andrew Heller
+
+## Copyright: Copyright 2024, Bottle Detector
+
+## Credits: TBD
+
+## License: TBD
+
+## Version: 1.0.0
+
+## Maintainer: TBD
+
+## Email: abh037@gmail.com
+
+## Status: In-progress
+
+##################################################
+
+
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
 from norfair import Detection, Tracker, Video, draw_boxes
