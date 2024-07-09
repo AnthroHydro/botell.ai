@@ -1,6 +1,6 @@
 # costiabottles
 
-See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for installation instructions.
+See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for more detailed installation instructions.
 
 Example code for use as an import:
 
