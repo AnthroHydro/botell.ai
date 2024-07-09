@@ -12,7 +12,7 @@ model.track(path='demo.mp4')
 ```
 Type `python bottledetector.py --help` for command line usage and list of arguments.
 
-Alternatively, in Python, call `help(BottleDetector)` for class documentation.
+Alternatively, in Python after importing the BottleDetector module, call `help(BottleDetector)` for class documentation.
 
 Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
 
