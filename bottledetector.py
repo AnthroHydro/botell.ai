@@ -7,7 +7,7 @@
 ## Author: Andrew Heller and Jason Davison
 ## Copyright: Copyright 2024, Botell.ai
 ## License: Creative Commons Attribution 4.0 International
-## Version: 1.0.1
+## Version: 1.0.2
 ## Maintainer: Andrew Heller
 ## Email: abh037@gmail.com and davisonj@cua.edu
 ## Status: In-progress -- 7/8/2024 last update
@@ -242,6 +242,8 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--conf", type=float, default=0.02, help="confidence threshold the model should use")
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
     parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
+
+    assert args.minframedist > 0 and args.minframedist < 1, "minframedist must be between 0.0 and 1.0"
 
     args = parser.parse_args()
 
