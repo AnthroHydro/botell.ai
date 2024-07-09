@@ -1,10 +1,11 @@
---extra-index-url https://download.pytorch.org/whl/cu117
+--extra-index-url https://download.pytorch.org/whl/cu118
 numpy
 tensorflow
 keras
 pillow
 requests
 pandas
+openpyxl
 matplotlib
 seaborn
 graphviz
