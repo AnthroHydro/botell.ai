@@ -1,29 +1,16 @@
 ##################################################
-
-## TBD
-
+## Botell.ai
+##
+## Software package that detects and counts bottles in streams.
+##
 ##################################################
-
-## TBD
-
-##################################################
-
-## Author: Andrew Heller
-
-## Copyright: Copyright 2024, Bottle Detector
-
-## Credits: TBD
-
-## License: TBD
-
-## Version: 1.0.0
-
-## Maintainer: TBD
-
-## Email: abh037@gmail.com
-
-## Status: In-progress
-
+## Author: Andrew Heller and Jason Davison
+## Copyright: Copyright 2024, Botell.ai
+## License: Creative Commons Attribution 4.0 International
+## Version: 1.0.1
+## Maintainer: Andrew Heller
+## Email: abh037@gmail.com and davisonj@cua.edu
+## Status: In-progress -- 7/8/2024 last update
 ##################################################
 
 
@@ -50,7 +37,7 @@ class BottleDetector:
         Parameters:
             weights (String)    : path to the .pt file containing the weights of the model
         Returns:
-            None
+            BottleDetector class object
         """
         self.model = YOLO(weights)
             
@@ -72,23 +59,23 @@ class BottleDetector:
         result = self._yolo_detections_to_norfair_detections(result)
         return result
         
-    def track( self, 
-                    path = "demo.mp4", 
-                    skip_frames = 3, 
-                    tracker = None, 
-                    actual_num_bottles = None, 
-                    min_time = 1.0, 
-                    min_frame_dist = 0.3,
-                    show = False,
-                    thresh = 0.05,
-                    save = None):
+    def track( 
+                self, 
+                path = "demo.mp4", 
+                skip_frames = 3, 
+                tracker = None, 
+                actual_num_bottles = None, 
+                min_time = 1.0, 
+                min_frame_dist = 0.3,
+                show = False,
+                thresh = 0.05,
+                save = None):
         """
         Description:
             This method gathers data from the video, running the tracking algorithm to detect bottles. Post-processing 
             is performed so as to filter out false positives, making it easier to lower detection thresholds in the case
             of false negatives. 
         Parameters:
-            timestamps (String)         : txt file with timestamps for when each class is present
             path (String)               : the video to test the model on, associated with timestamps
             skip_frames (int)           : number of frames to be skipped before reading the next
             tracker (Tracker)           : a norfair Tracker object to be used for object tracking
@@ -96,8 +83,8 @@ class BottleDetector:
             min_time (float)            : the minimum number of seconds a bottle must be on screen for it to be counted
             min_frame_dist (float)      : a float between 0.0 and 1.0 representing the fraction of the screen
                                           the bottle must travel horizontally to be counted
-            thresh (float)              : confidence threshold the model should use
             show (bool)                 : whether or not the video should be displayed as tracking is run
+            thresh (float)              : confidence threshold the model should use
             save (String)               : either None or the name under which the video should be saved with tracking annotations
         Returns:
             int                         : number of bottles that were successfully tracked and counted in the video
@@ -237,7 +224,7 @@ class BottleDetector:
                 Detection(
                     points=bbox, scores=scores, label=0
                 )
-            )
+            )  
         return norfair_detections
 
 
