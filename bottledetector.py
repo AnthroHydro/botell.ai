@@ -7,10 +7,10 @@
 ## Author: Andrew Heller and Jason Davison
 ## Copyright: Copyright 2024, Botell.ai
 ## License: Creative Commons Attribution 4.0 International
-## Version: 1.0.2
+## Version: 1.0.3
 ## Maintainer: Andrew Heller
 ## Email: abh037@gmail.com and davisonj@cua.edu
-## Status: In-progress -- 7/9/2024 last update
+## Status: In-progress -- 7/10/2024 last update
 ##################################################
 
 
