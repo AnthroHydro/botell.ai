@@ -77,7 +77,7 @@ class BottleDetector:
             path (String)               : the video to test the model on, associated with timestamps
             skip_frames (int)           : number of frames to be skipped before reading the next
             tracker (Tracker)           : a norfair Tracker object to be used for object tracking
-            actual_num_bottles (int)    : the number of bottles that actually appear in the video, shows error metrics is present
+            actual_num_bottles (int)    : the number of bottles that actually appear in the video, shows error metrics if present
             min_time (float)            : the minimum number of seconds a bottle must be on screen for it to be counted
             min_frame_dist (float)      : a float between 0.0 and 1.0 representing the fraction of the screen
                                           the bottle must travel horizontally to be counted
