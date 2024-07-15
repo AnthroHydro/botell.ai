@@ -241,9 +241,8 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
     parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
 
-    assert args.minframedist > 0 and args.minframedist < 1, "minframedist must be between 0.0 and 1.0"
-
     args = parser.parse_args()
+    assert args.minframedist > 0 and args.minframedist < 1, "minframedist must be between 0.0 and 1.0"
 
     print(" > Loading model...")
     model = BottleDetector()
