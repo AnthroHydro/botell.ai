@@ -2,11 +2,15 @@
 
 See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for more detailed installation instructions.
 
+# Command Line
+
 Example command for use as a python command line tool:
 
 `python bottledetector.py "path/to/video.mp4" --show`
 
 For command line tool help, run `python bottledetector.py --help` to display documentation and list of arguments.
+
+# Module
 
 Example code for use as an import:
 
