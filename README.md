@@ -22,6 +22,8 @@ model.track(path='path/to/video.mp4')
 ```
 For Python module help, after importing BottleDetector as shown above, call `help(BottleDetector)` for class documentation.
 
+# License
+
 Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
 
 This work is licensed under a
