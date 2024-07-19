@@ -1,6 +1,6 @@
 # Botell.ai
 
-See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for more detailed installation instructions.
+Model weights can be found [here](https://github.com/AnthroHydro/costiabottles/releases/download/v1.0.0/bottle_weights.pt). Ensure they are placed in the same directory as `bottledetector.py`. See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for more detailed installation instructions.
 
 # Command Line
 
