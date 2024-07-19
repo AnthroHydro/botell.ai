@@ -1,4 +1,4 @@
-# costiabottles
+# Botell.ai
 
 See the [wiki](https://github.com/AnthroHydro/costiabottles/wiki) for more detailed installation instructions.
 
