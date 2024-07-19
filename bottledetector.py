@@ -7,10 +7,10 @@
 ## Author: Andrew Heller and Jason Davison
 ## Copyright: Copyright 2024, Botell.ai
 ## License: Creative Commons Attribution 4.0 International
-## Version: 1.0.3
+## Version: 1.1.0
 ## Maintainer: Andrew Heller
 ## Email: abh037@gmail.com and davisonj@cua.edu
-## Status: In-progress -- 7/10/2024 last update
+## Status: In-progress -- 7/19/2024 last update
 ##################################################
 
 
@@ -48,7 +48,9 @@ class BottleDetector:
             runs the input frame through an inference pass on the class's model
         Parameters:
             frame (String)      : video frame to be processed and tracked
-            thresh (float)      : confidence threshold the model should use
+            slice (bool)        : whether the frame should be sliced via sahi for
+                                  processing (note that this increases accuracy for
+                                  detecting small objects, but increases inference time)
         Returns:
             List[Detections]: list of norfair Detection objects for the results of
                               running the model on the input frame
@@ -67,7 +69,8 @@ class BottleDetector:
                 min_frame_dist = 0.3,
                 show = False,
                 thresh = 0.05,
-                save = None):
+                save = None,
+                still_cam=False):
         """
         Description:
             This method gathers data from the video, running the tracking algorithm to detect bottles. Post-processing 
@@ -77,7 +80,7 @@ class BottleDetector:
             path (String)               : the video to test the model on, associated with timestamps
             skip_frames (int)           : number of frames to be skipped before reading the next
             tracker (Tracker)           : a norfair Tracker object to be used for object tracking
-            actual_num_bottles (int)    : the number of bottles that actually appear in the video, shows error metrics if present
+            actual_num_bottles (int)    : the number of bottles that actually appear in the video, shows error metrics is present
             min_time (float)            : the minimum number of seconds a bottle must be on screen for it to be counted
             min_frame_dist (float)      : a float between 0.0 and 1.0 representing the fraction of the screen
                                           the bottle must travel horizontally to be counted
@@ -112,6 +115,7 @@ class BottleDetector:
         width = int(vidcap.get(cv2.CAP_PROP_FRAME_WIDTH))
         success = vidcap.grab()
         assert success, "Could not open video!"
+        backSub = cv2.createBackgroundSubtractorMOG2(detectShadows=False)
         i = 0
         framerate = 1.0
         diff = []
@@ -130,10 +134,12 @@ class BottleDetector:
                 tracked_objects = tracker.update(detections = nf_detections)
 
                 #display the video if 'show' is True
-                annotated_frame = draw_boxes(frame, tracked_objects, thickness=3, draw_ids=True)
+                annotated_frame = draw_boxes(frame, tracked_objects, thickness=3, draw_ids=True, draw_labels=True, draw_scores=True)
                 if save is not None:
                     writer.write(annotated_frame)
                 if show:
+                    if height > 1440:
+                        annotated_frame = cv2.resize(annotated_frame, (width//3, height//3))
                     cv2.imshow("VID", annotated_frame)
                     cv2.waitKey(1)
 
@@ -185,14 +191,22 @@ class BottleDetector:
             #if the object is both on screen for long enough and travels far enough across
             #the screen horizontally, then we count that as a detected bottle in the final
             #result
-            if ((pts[-1][2] - pts[0][2])/fps) > (1.5+min_time) and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
-                bottles.append(
-                    {'tracking_id' : id, 
-                    'start_time' : timedelta(seconds=(pts[0][2]//fps)),
-                    'end_time' : timedelta(seconds=(pts[-1][2]//fps) - 2),
-                    'confs' : b[0],
-                    'x_dist_travelled' : pts[-1][0] - pts[0][0]})
-
+            if still_cam:
+                if ((pts[-1][2] - pts[0][2])/fps) > (1.5+min_time) and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
+                    bottles.append(
+                        {'tracking_id' : id, 
+                        'start_time' : timedelta(seconds=(pts[0][2]//fps)),
+                        'end_time' : timedelta(seconds=(pts[-1][2]//fps) - 2),
+                        'confs' : b[0],
+                        'x_dist_travelled' : pts[-1][0] - pts[0][0]})
+            else:
+                if ((pts[-1][2] - pts[0][2])/fps) > min_time:
+                    bottles.append(
+                        {'tracking_id' : id, 
+                        'start_time' : timedelta(seconds=(pts[0][2]//fps)),
+                        'end_time' : timedelta(seconds=(pts[-1][2]//fps) - 2),
+                        'confs' : b[0],
+                        'x_dist_travelled' : pts[-1][0] - pts[0][0]})
         #save metrics to variables and return them
         nt = len(bottles)
         er = None
@@ -240,9 +254,9 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--conf", type=float, default=0.02, help="confidence threshold the model should use")
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
     parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
+    parser.add_argument("-m", "--stillcam", action="store_true", help="if the camera is stationary in the video, specifying this will allow the algorithm to better filter out false positives")
 
     args = parser.parse_args()
-    assert args.minframedist > 0 and args.minframedist < 1, "minframedist must be between 0.0 and 1.0"
 
     print(" > Loading model...")
     model = BottleDetector()
@@ -258,7 +272,8 @@ if __name__ == "__main__":
                                             skip_frames=skipframes, 
                                             show=args.show, 
                                             thresh=args.conf,
-                                            save=args.verify)
+                                            save=args.verify,
+                                            still_cam=args.stillcam)
     error = "N/A" if error is None else error
     num_actual = "N/A" if args.numbottles is None else args.numbottles
 
