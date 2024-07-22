@@ -70,7 +70,7 @@ class BottleDetector:
                 show = False,
                 thresh = 0.05,
                 save = None,
-                still_cam=False):
+                moving_cam=False):
         """
         Description:
             This method gathers data from the video, running the tracking algorithm to detect bottles. Post-processing 
@@ -191,7 +191,7 @@ class BottleDetector:
             #if the object is both on screen for long enough and travels far enough across
             #the screen horizontally, then we count that as a detected bottle in the final
             #result
-            if still_cam:
+            if not moving_cam:
                 if ((pts[-1][2] - pts[0][2])/fps) > (1.5+min_time) and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
                     bottles.append(
                         {'tracking_id' : id, 
@@ -254,7 +254,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--conf", type=float, default=0.02, help="confidence threshold the model should use")
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
     parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
-    parser.add_argument("-m", "--stillcam", action="store_true", help="if the camera is stationary in the video, specifying this will allow the algorithm to better filter out false positives")
+    parser.add_argument("-m", "--movingcam", action="store_false", help="if the camera is not stationary in the video, specifying this will disable the post-processing algorithm (which assumes a still camera)")
 
     args = parser.parse_args()
 
@@ -273,7 +273,7 @@ if __name__ == "__main__":
                                             show=args.show, 
                                             thresh=args.conf,
                                             save=args.verify,
-                                            still_cam=args.stillcam)
+                                            moving_cam=args.movingcam)
     error = "N/A" if error is None else error
     num_actual = "N/A" if args.numbottles is None else args.numbottles
 
