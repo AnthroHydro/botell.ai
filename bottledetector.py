@@ -254,9 +254,11 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--conf", type=float, default=0.02, help="confidence threshold the model should use")
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
     parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
-    parser.add_argument("-m", "--movingcam", action="store_false", help="if the camera is not stationary in the video, specifying this will disable the post-processing algorithm (which assumes a still camera)")
+    parser.add_argument("-m", "--movingcam", action="store_true", help="if the camera is not stationary in the video, specifying this will disable the post-processing algorithm (which assumes a still camera)")
 
     args = parser.parse_args()
+    assert args.output[-4:] == '.txt', "--output argument must be a .txt file"
+
 
     print(" > Loading model...")
     model = BottleDetector()
@@ -282,8 +284,30 @@ if __name__ == "__main__":
     ids = []
     bools = []
     print(f" > Writing to {args.output}...")
-    assert args.output[-4:] == '.txt', "--output argument must be a .txt file"
+
+    if args.verify is not None:
+        data = {'ID' : ids, 'Start' : starttimes, 'End' : endtimes, 'True?' : bools}
+        df = pd.DataFrame.from_dict(data)
+        df.to_excel(args.verify, sheet_name='sheet1')
+        wb = openpyxl.load_workbook(args.verify)
+        ws = wb['sheet1']
+        dv = DataValidation(type="list", formula1='"True,False"', allow_blank=False)
+        dv.error = 'Your entry is not valid'
+        dv.errorTitle = 'Invalid Entry'
+        ws.add_data_validation(dv)
+        ran = f'E2:E{len(ids)+1}' if len(ids) > 0 else f'E2:E2'
+        dv.ranges.add(ran)
+        wb.save(args.verify)
+
+    vars_dict = vars(args)
+
     with open(args.output, 'w') as f:
+        for k in vars_dict:
+            if vars_dict[k] == parser.get_default(k):
+                print('a')
+                f.write(f"{k}: {vars_dict[k]} (Default)\n")
+            else:
+                f.write(f"{k}: {vars_dict[k]}\n")
         f.write(f'Number of bottles tracked: {num_tracked}\n')
         f.write(f'Actual number of bottles:  {num_actual}\n')
         f.write(f'Error:  {error}\n\n')
@@ -298,18 +322,6 @@ if __name__ == "__main__":
             f.write(f"\tstart time         - {b['start_time']}\n")
             f.write(f"\tend time           - {b['end_time']}\n")
             f.write(f"\tx pixels travelled - {b['x_dist_travelled']}\n")
-    if args.verify is not None:
-        data = {'ID' : ids, 'Start' : starttimes, 'End' : endtimes, 'True?' : bools}
-        df = pd.DataFrame.from_dict(data)
-        df.to_excel(args.verify, sheet_name='sheet1')
-        wb = openpyxl.load_workbook(args.verify)
-        ws = wb['sheet1']
-        dv = DataValidation(type="list", formula1='"True,False"', allow_blank=False)
-        dv.error = 'Your entry is not valid'
-        dv.errorTitle = 'Invalid Entry'
-        ws.add_data_validation(dv)
-        ran = f'E2:E{len(ids)+1}' if len(ids) > 0 else f'E2:E2'
-        dv.ranges.add(ran)
-        wb.save(args.verify)
+
     print(" > Done!")
 
