@@ -304,7 +304,6 @@ if __name__ == "__main__":
     with open(args.output, 'w') as f:
         for k in vars_dict:
             if vars_dict[k] == parser.get_default(k):
-                print('a')
                 f.write(f"{k}: {vars_dict[k]} (Default)\n")
             else:
                 f.write(f"{k}: {vars_dict[k]}\n")
