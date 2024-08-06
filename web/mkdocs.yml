@@ -1,0 +1,7 @@
+site_name: botell.ai
+site_url: 'http://127.0.0.1:8000/about/'
+repo_url: 'https://github.com/AnthroHydro/botell.ai'
+nav:
+    - Home: index.md
+    - Documentation: docs.md
+theme: readthedocs
