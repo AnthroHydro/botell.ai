@@ -77,7 +77,7 @@ class BottleDetector:
             is performed so as to filter out false positives, making it easier to lower detection thresholds in the case
             of false negatives. 
         Parameters:
-            path (String)               : the video to test the model on, associated with timestamps
+            path (String)               : the video to test the model on
             skip_frames (int)           : number of frames to be skipped before reading the next
             tracker (Tracker)           : a norfair Tracker object to be used for object tracking
             actual_num_bottles (int)    : the number of bottles that actually appear in the video, shows error metrics is present
