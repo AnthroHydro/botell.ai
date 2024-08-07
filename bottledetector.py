@@ -90,7 +90,7 @@ class BottleDetector:
         Returns:
             int                         : number of bottles that were successfully tracked and counted in the video
             float                       : the accuracy of the model on the input video
-            List[tuple]                 : list of the metrics of the bottles tracked in the video
+            tuple[int, int, Dict]       : metrics and a dictionary of the bottles tracked in the video  
         """
 
         #init video
