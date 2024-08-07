@@ -7,10 +7,10 @@
 ## Author: Andrew Heller and Jason Davison
 ## Copyright: Copyright 2024, Botell.ai
 ## License: Creative Commons Attribution 4.0 International
-## Version: 1.2.0
+## Version: 1.2.1
 ## Maintainer: Andrew Heller
 ## Email: abh037@gmail.com and davisonj@cua.edu
-## Status: In-progress -- 7/31/2024 last update
+## Status: In-progress -- 8/7/2024 last update
 ##################################################
 
 
@@ -77,7 +77,7 @@ class BottleDetector:
             is performed so as to filter out false positives, making it easier to lower detection thresholds in the case
             of false negatives. 
         Parameters:
-            path (String)               : the video to test the model on
+            path (String)               : the video to test the model on, associated with timestamps
             skip_frames (int)           : number of frames to be skipped before reading the next
             tracker (Tracker)           : a norfair Tracker object to be used for object tracking
             actual_num_bottles (int)    : the number of bottles that actually appear in the video, shows error metrics is present
@@ -90,7 +90,7 @@ class BottleDetector:
         Returns:
             int                         : number of bottles that were successfully tracked and counted in the video
             float                       : the accuracy of the model on the input video
-            tuple[int, int, Dict]       : metrics and a dictionary of the bottles tracked in the video  
+            List[tuple]                 : list of the metrics of the bottles tracked in the video
         """
 
         #init video
@@ -120,9 +120,9 @@ class BottleDetector:
         framerate = 1.0
         diff = []
         if save is not None:
-            assert save[-5:] == ".xlsx", "--verify argument must be a .xlsx file"
+            assert save[-4:] == ".avi", "save argument must be a .avi file"
             fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-            writer = cv2.VideoWriter(f"{save[:-5]}.avi", fourcc, fps/skip_frames, (width, height), isColor=True)
+            writer = cv2.VideoWriter(save, fourcc, fps/skip_frames, (width, height), isColor=True)
         while success:
             start = time()
             if i % skip_frames == 0:
@@ -273,6 +273,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     assert args.output[-4:] == '.txt', "--output argument must be a .txt file"
 
+    save = None
+    if args.verify: 
+        assert args.verify[-5:] == ".xlsx", "--verify argument must be a .xlsx file"
+        save = f"{args.verify[:-5]}.avi"
+
 
     print(" > Loading model...")
     model = BottleDetector()
@@ -288,7 +293,7 @@ if __name__ == "__main__":
                                             skip_frames=skipframes, 
                                             show=args.show, 
                                             thresh=args.conf,
-                                            save=args.verify,
+                                            save=save,
                                             moving_cam=args.movingcam)
     error = "N/A" if error is None else error
     num_actual = "N/A" if args.numbottles is None else args.numbottles
