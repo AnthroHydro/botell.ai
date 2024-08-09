@@ -7,10 +7,10 @@
 ## Author: Andrew Heller and Jason Davison
 ## Copyright: Copyright 2024, Botell.ai
 ## License: Creative Commons Attribution 4.0 International
-## Version: 1.2.1
+## Version: 1.2.2
 ## Maintainer: Andrew Heller
 ## Email: abh037@gmail.com and davisonj@cua.edu
-## Status: In-progress -- 8/7/2024 last update
+## Status: In-progress -- 8/9/2024 last update
 ##################################################
 
 
@@ -105,8 +105,8 @@ class BottleDetector:
         if tracker is None:
             tracker = Tracker(
                 distance_function       = "euclidean", 
-                distance_threshold      = 100, 
-                reid_distance_threshold = 200, 
+                distance_threshold      = 200, 
+                reid_distance_threshold = 250, 
                 hit_counter_max         = 30, 
                 initialization_delay    = 4)
 
@@ -128,6 +128,8 @@ class BottleDetector:
             if i % skip_frames == 0:
 
                 _, frame = vidcap.retrieve()
+                if height > 640:
+                        frame = cv2.resize(frame, ((640*width) // height, 640))
                 mask = backSub.apply(frame)
                 mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=2)
                 mask = cv2.dilate(mask, np.ones((7, 7), np.uint8), iterations=5)
@@ -152,8 +154,6 @@ class BottleDetector:
                 if save is not None:
                     writer.write(annotated_frame)
                 if show:
-                    if height > 1440:
-                        annotated_frame = cv2.resize(annotated_frame, (width//3, height//3))
                     cv2.imshow("VID", annotated_frame)
                     cv2.waitKey(1)
 
