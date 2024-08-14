@@ -1,9 +1,9 @@
 # botell.ai
 
-TBD
+Software package that detects and counts bottles in streams.
 
 ## Model Output
-[Demo of small test video.](https://youtu.be/kvOsbvp3nqc?si=2m3qzh86oXzbxDbN)
+[![Demo of small test video.](thumb.jpg)](https://www.youtube.com/watch?v=kvOsbvp3nqc)
 
 ## License
 

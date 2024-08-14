@@ -1,245 +1,203 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        
-        
-        <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Documentation - botell.ai</title>
-        <link href="../css/bootstrap.min.css" rel="stylesheet">
-        <link href="../css/fontawesome.min.css" rel="stylesheet">
-        <link href="../css/brands.min.css" rel="stylesheet">
-        <link href="../css/solid.min.css" rel="stylesheet">
-        <link href="../css/v4-font-face.min.css" rel="stylesheet">
-        <link href="../css/base.css" rel="stylesheet">
-        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
-        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-        <script>hljs.highlightAll();</script> 
-    </head>
-
-    <body>
-        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
-                <a class="navbar-brand" href="..">botell.ai</a>
-                <!-- Expander button -->
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Expanded navigation -->
-                <div id="navbar-collapse" class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item">
-                                <a href="../about/" class="nav-link">About</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="./" class="nav-link active" aria-current="page">Documentation</a>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav ms-md-auto">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
-                            </a>
-                        </li>
-                            <li class="nav-item">
-                                <a rel="prev" href="../about/" class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
-            <span class="fa fa-angle-down"></span>
-        </button>
-    </div>
-
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="http://127.0.0.1:8000/about/docs/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Documentation - botell.ai</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
-    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
-        <ul class="nav flex-column">
-            
-            <li class="nav-item" data-bs-level="1"><a href="#usage" class="nav-link">Usage</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#command-line" class="nav-link">Command Line</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#module" class="nav-link">Module</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-        </ul>
-    </div>
-</div></div>
-                    <div class="col-md-9" role="main">
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Documentation";
+        var mkdocs_page_input_path = "docs.md";
+        var mkdocs_page_url = "/about/docs/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
 
-<h1 id="usage">Usage</h1>
-<h2 id="command-line">Command Line</h2>
-<ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs -h</code> - Print help message and exit.</li>
-</ul>
-<p>usage: <code>bottledetector.py [-h] [-s] [-n NUMBOTTLES] [-f FRAMERATE] [-t MINTIME] [-d MINFRAMEDIST] [-c CONF] [-o OUTPUT] [-v VERIFY] path</code></p>
-<p>positional arguments:
-  path                  the file path to the video that is to be processed</p>
-<p>optional arguments:
-  <code>-h</code>, <code>--help</code>            show this help message and exit
-  -s, <code>--show</code>            if this is specified, the model will show the video as it is processed
-  <code>-n NUMBOTTLES</code>, <code>--numbottles NUMBOTTLES</code>
-                        the number of bottles that appear in the video; if this is specified, error will be calculated
-  <code>-f FRAMERATE</code>, <code>--framerate FRAMERATE</code>
-                        the frames per second at which the video should be processed
-  <code>-t MINTIME</code>, <code>--mintime MINTIME</code>
-                        the minimum number of seconds a bottle must be on screen for it to be counted
-  <code>-d MINFRAMEDIST</code>, <code>--minframedist MINFRAMEDIST</code>
-                        a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally
-                        to be counted
-  <code>-c CONF</code>, <code>--conf CONF</code>  confidence threshold the model should use
-  <code>-o OUTPUT</code>, <code>--output OUTPUT</code>
-                        the name of the .txt the tool should write metrics to
-  <code>-v VERIFY</code>, <code>--verify VERIFY</code>
-                        filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)</p>
-<h2 id="module">Module</h2>
-<p><code>class BottleDetector(builtins.object)</code>
- |  <code>BottleDetector(weights='bottle_weights.pt')</code>
- |<br />
- |  Methods defined here:
- |<br />
- |  <code>__init__(self, weights='bottle_weights.pt')</code>
- |      Description:
- |          initializes a new YOLO model
- |      Parameters:
- |          weights (<code>String</code>)    : path to the .pt file containing the weights of the model
- |      Returns:
- |          <code>BottleDetector</code> class object
- |<br />
- |  <code>predict_frame(self, frame, thresh)</code>
- |      Description:
- |          runs the input frame through an inference pass on the class's model
- |      Parameters:
- |          frame (<code>String</code>)      : video frame to be processed and tracked
- |          thresh (<code>float</code>)      : confidence threshold the model should use
- |      Returns:
- |          <code>List[Detections]</code>: list of norfair Detection objects for the results of
- |                            running the model on the input frame
- |<br />
- |  <code>track(self, path='demo.mp4', skip_frames=3, tracker=None, actual_num_bottles=None, min_time=1.0, min_frame_dist=0.3, show=False, thresh=0.05, save=None)</code>
- |      Description:
- |          This method gathers data from the video, running the tracking algorithm to detect bottles. Post-processing 
- |          is performed so as to filter out false positives, making it easier to lower detection thresholds in the case
- |          of false negatives. 
- |      Parameters:
- |          path (<code>String</code>)               : the video to test the model on, associated with timestamps
- |          skip_frames (<code>int</code>)           : number of frames to be skipped before reading the next
- |          tracker (<code>Tracker</code>)           : a norfair Tracker object to be used for object tracking
- |          actual_num_bottles (<code>int</code>)    : the number of bottles that actually appear in the video, shows error metrics if present
- |          min_time (<code>float</code>)            : the minimum number of seconds a bottle must be on screen for it to be counted
- |          min_frame_dist (<code>float</code>)      : a float between 0.0 and 1.0 representing the fraction of the screen
- |                                        the bottle must travel horizontally to be counted
- |          show (<code>bool</code>)                 : whether or not the video should be displayed as tracking is run
- |          thresh (<code>float</code>)              : confidence threshold the model should use
- |          save (<code>String</code>)               : either None or the name under which the video should be saved with tracking annotations
- |      Returns:
- |          <code>int</code>                         : number of bottles that were successfully tracked and counted in the video
- |          <code>float</code>                       : the accuracy of the model on the input video
- |          <code>List[tuple]</code>                 : list of the metrics of the bottles tracked in the video</p></div>
-            </div>
-        </div>
+<body class="wy-body-for-nav" role="document">
 
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script src="../js/bootstrap.bundle.min.js"></script>
-        <script>
-            var base_url = "..",
-                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
-        </script>
-        <script src="../js/base.js"></script>
-        <script src="../search/main.js"></script>
-
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="searchModalLabel">Search</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>From here you can search these documents. Enter your search terms below.</p>
-                <form>
-                    <div class="form-group">
-                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> botell.ai
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
 </div>
+      </div>
 
-    </body>
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Documentation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#command-line">Command Line</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example">Example</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#module">Module</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation_1">Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example_1">Example</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">botell.ai</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Documentation</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/AnthroHydro/botell.ai/edit/master/docs/docs.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="usage">Usage</h1>
+<h2 id="command-line">Command Line</h2>
+<h3 id="documentation">Documentation</h3>
+<p>usage: 
+  <code>python bottledetector.py [--help] [--show] [--numbottles] [--framerate] [--mintime] [--minframedist] [--conf] [--output] [--verify] path</code></p>
+<p>positional arguments:<br />
+<code>path</code>                    the file path to the video that is to be processed</p>
+<p>optional arguments:<br />
+<code>-h</code>, <code>--help</code>            show this help message and exit<br />
+<code>-s</code>, <code>--show</code>            if this is specified, the model will show the video as it is processed<br />
+<code>-n</code>, <code>--numbottles</code> the number of bottles that appear in the video; if this is specified, error will be calculated<br />
+<code>-f</code>, <code>--framerate</code> the frames per second at which the video should be processed<br />
+<code>-t</code>, <code>--mintime</code> the minimum number of seconds a bottle must be on screen for it to be counted<br />
+<code>-d</code>, <code>--minframedist</code> a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally to be counted<br />
+<code>-c</code>, <code>--conf</code> confidence threshold the model should use<br />
+<code>-o</code>, <code>--output</code> the name of the .txt the tool should write metrics to<br />
+<code>-v</code>, <code>--verify</code> filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)  </p>
+<h3 id="example">Example</h3>
+<p><code>python bottledetector.py "path/to/video.mp4" -s -f 15 -c 0.2</code> </p>
+<p>This will process the video at 15FPS (<code>-f 15</code>, shorthand for <code>--framerate 15</code>) and a confidence threshold of 0.2 (<code>-c 0.2</code>, shorthand for <code>--conf 0.2</code>) while showing the output as it processes (<code>-s</code>, shorthand for <code>--show</code>)</p>
+<h2 id="module">Module</h2>
+<h3 id="documentation_1">Documentation</h3>
+<p><code>BottleDetector(weights='bottle_weights.pt')</code>  </p>
+<p><code>__init__(self, weights='bottle_weights.pt')</code><br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Description</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;initializes a new YOLO model<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Parameters</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>weights</code> (<code>String</code>)    : path to the .pt file containing the weights of the model<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Returns</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>BottleDetector</code> class object  </p>
+<p><code>predict_frame(self, frame, thresh)</code><br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Description</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runs the input frame through an inference pass on the class's model<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Parameters</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>frame</code> (<code>String</code>)      : video frame to be processed and tracked<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>thresh</code> (<code>float</code>)      : confidence threshold the model should use<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Returns</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>List[Detections]</code>      : list of norfair Detection objects  </p>
+<p><code>track(self, path='demo.mp4', skip_frames=3, tracker=None, actual_num_bottles=None, min_time=1.0, min_frame_dist=0.3, show=False, thresh=0.05, save=None)</code><br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Description</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method gathers data from the video, running the tracking algorithm to detect<br> 
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bottles. Post-processing is performed so as to filter out false positives, making it<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easier to lower detection thresholds in the case of false negatives.<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Parameters</strong>:<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>path</code> (<code>String</code>)               : the video to test the model on, associated with timestamps<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>skip_frames</code> (<code>int</code>)           : number of frames to be skipped before reading the next<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>tracker</code> (<code>Tracker</code>)           : a norfair <code>Tracker</code> object to be used for object tracking<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>actual_num_bottles</code> (<code>int</code>)    : the number of bottles that actually appear in the video<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>min_time</code> (<code>float</code>)            : number of seconds a bottle must be on screen for it to be counted<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>min_frame_dist</code> (<code>float</code>)      : horizontal fraction of the frame the bottle must travel to be counted<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>show</code> (<code>bool</code>)                 : whether or not the video should be displayed as tracking is run<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>thresh</code> (<code>float</code>)              : confidence threshold the model should use<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>save</code> (<code>String</code>)               : either <code>None</code> or the name under which the annotated video should be saved<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;<strong>Returns</strong>:
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>int</code>                         : number of bottles that were successfully tracked and counted in the video<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>float</code>                       : the accuracy of the model on the input video<br />
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>tuple[int, int, Dict]</code>       : metrics and a dictionary of the bottles tracked in the video  </p>
+<h3 id="example_1">Example</h3>
+<pre><code>from bottledetector import BottleDetector
+
+model = BottleDetector()
+model.track(path='path/to/video.mp4')
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/AnthroHydro/botell.ai" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
 </html>
