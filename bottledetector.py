@@ -7,10 +7,10 @@
 ## Author: Andrew Heller and Jason Davison
 ## Copyright: Copyright 2024, Botell.ai
 ## License: Creative Commons Attribution 4.0 International
-## Version: 1.2.2
+## Version: 1.2.5
 ## Maintainer: Andrew Heller
 ## Email: abh037@gmail.com and davisonj@cua.edu
-## Status: In-progress -- 8/9/2024 last update
+## Status: In-progress -- 8/14/2024 last update
 ##################################################
 
 
@@ -55,7 +55,7 @@ class BottleDetector:
             List[Detections]: list of norfair Detection objects for the results of
                               running the model on the input frame
         """
-        result = self.model(frame, conf=thresh, verbose=False, iou=0.3)
+        result = self.model(frame, conf=thresh, verbose=False, iou=0.7)
         result = self._yolo_detections_to_norfair_detections(result)
         return result
         
@@ -106,7 +106,7 @@ class BottleDetector:
             tracker = Tracker(
                 distance_function       = "euclidean", 
                 distance_threshold      = 200, 
-                reid_distance_threshold = 250, 
+                reid_distance_threshold = 300, 
                 hit_counter_max         = 30, 
                 initialization_delay    = 4)
 
@@ -123,6 +123,8 @@ class BottleDetector:
             assert save[-4:] == ".avi", "save argument must be a .avi file"
             fourcc = cv2.VideoWriter_fourcc(*"MJPG")
             writer = cv2.VideoWriter(save, fourcc, fps/skip_frames, (width, height), isColor=True)
+            if height > 640:
+                writer = cv2.VideoWriter(save, fourcc, fps/skip_frames, ((640*width) // height, 640), isColor=True)
         while success:
             start = time()
             if i % skip_frames == 0:
@@ -134,7 +136,7 @@ class BottleDetector:
                 mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8), iterations=2)
                 mask = cv2.dilate(mask, np.ones((7, 7), np.uint8), iterations=5)
                 mask = cv2.blur(mask, (height//10, height//10))
-                scaled_heatmap = (((mask - mask.min()) / (mask.max() - mask.min() + 1e-7))/3) - (1/3)
+                scaled_heatmap = (((mask - mask.min()) / (mask.max() - mask.min() + 1e-7))/2) - (1/2)
 
 
                 #run object detection and update the tracker
@@ -206,13 +208,13 @@ class BottleDetector:
             #the screen horizontally, then we count that as a detected bottle in the final
             #result
             if not moving_cam:
-                if ((pts[-1][2] - pts[0][2])/fps) > (1.5+min_time) and (pts[-1][0] - pts[0][0]) > min_frame_dist * width:
+                if ((pts[-1][2] - pts[0][2])/fps) > (1.5+min_time) and np.linalg.norm(np.array(pts[-1][:-1]) - np.array(pts[0][:-1])) > min_frame_dist * width:
                     bottles.append(
                         {'tracking_id' : id, 
                         'start_time' : timedelta(seconds=(pts[0][2]//fps)),
                         'end_time' : timedelta(seconds=(pts[-1][2]//fps) - 2),
                         'confs' : b[0],
-                        'x_dist_travelled' : pts[-1][0] - pts[0][0]})
+                        'dist_travelled' : np.linalg.norm(np.array(pts[-1][:-1]) - np.array(pts[0][:-1]))})
             else:
                 if ((pts[-1][2] - pts[0][2])/fps) > min_time:
                     bottles.append(
@@ -220,7 +222,7 @@ class BottleDetector:
                         'start_time' : timedelta(seconds=(pts[0][2]//fps)),
                         'end_time' : timedelta(seconds=(pts[-1][2]//fps) - 2),
                         'confs' : b[0],
-                        'x_dist_travelled' : pts[-1][0] - pts[0][0]})
+                        'dist_travelled' : np.linalg.norm(np.array(pts[-1][:-1]) - np.array(pts[0][:-1]))})
         #save metrics to variables and return them
         nt = len(bottles)
         er = None
@@ -263,8 +265,8 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--show", action="store_true", help="if this is specified, the model will show the video as it is processed")
     parser.add_argument("-n", "--numbottles", type=int, default=None, help="the number of bottles that appear in the video; if this is specified, error will be calculated")
     parser.add_argument("-f", "--framerate", type=int, default=None, help="the frames per second at which the video should be processed")
-    parser.add_argument("-t", "--mintime", type=float, default=1.0, help="the minimum number of seconds a bottle must be on screen for it to be counted")
-    parser.add_argument("-d", "--minframedist", type=float, default=0.4, help="a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally to be counted")
+    parser.add_argument("-t", "--mintime", type=float, default=-1.0, help="the minimum number of seconds a bottle must be on screen for it to be counted")
+    parser.add_argument("-d", "--minframedist", type=float, default=0.3, help="a float between 0.0 and 1.0 representing the fraction of the screen the bottle must travel horizontally to be counted")
     parser.add_argument("-c", "--conf", type=float, default=0.02, help="confidence threshold the model should use")
     parser.add_argument("-o", "--output", type=str, default="output.txt", help="the name of the .txt the tool should write metrics to")
     parser.add_argument("-v", "--verify", type=str, default=None, help="filename with the .xlsx extension to be created for verification (a .avi file with the same name will be saved as well)")
@@ -325,7 +327,7 @@ if __name__ == "__main__":
             f.write(f"\tconf               - {str(np.mean(np.unique(b['confs'])))[:7]}\n")
             f.write(f"\tstart time         - {b['start_time']}\n")
             f.write(f"\tend time           - {b['end_time']}\n")
-            f.write(f"\tx pixels travelled - {b['x_dist_travelled']}\n")
+            f.write(f"\tpixels travelled   - {b['dist_travelled']}\n")
 
     if args.verify is not None:
         data = {'ID' : ids, 'Start' : starttimes, 'End' : endtimes, 'True?' : bools}
