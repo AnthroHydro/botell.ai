@@ -24,6 +24,7 @@ For Python module help, after importing BottleDetector as shown above, call `hel
 
 # Model Output
 [Demo of small test video.](https://youtu.be/kvOsbvp3nqc?si=2m3qzh86oXzbxDbN)
+[Extended Playlist of Input and Output Videos.](https://youtube.com/playlist?list=PLjfXYS1xnU1L98_oL9VqPYYu0GnQ8-rfF&si=xyKeCxzRXzxWktPY)
 
 # License
 
